@@ -1,46 +1,27 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SnakeHead : MonoBehaviour
 {
-    /// <summary>
-    /// 1. Get the snake moving in cardinal directions
-    ///     - The snake head steers the snake
-    ///     - The snake is constantly in motion
-    ///     - Each snake tail piece follows the piece in front of it
-    ///     - If the snake head steers right, the tail piece behind it continues until it reaches the snake heads
-    ///       previous position, and then it's next position will move in the new direction of the head piece.
-    /// </summary>
-    
-    private void Awake()
-    {
-        
-    }
-    
-    private void Start()
-    {
-        
-    }
-    
-    private void Update()
-    {
-        //transform.Translate(new Vector3(Input.GetAxis("Horizontal") * Time.deltaTime * 1.0F, 0, 0));
-        transform.Translate(new Vector3(Time.deltaTime * 1.0F, 0, 0));
-    }
+    [SerializeField] private GameObject _tailPrefab;
+    [SerializeField] private List<Transform> _tailPartsList = new();
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Food"))
         {
-            // Create new tail piece
-            /*
-             * Maintain a List/Queue of tail pieces
-             * Instantiate a chosen amount in Awake/Start
-             * When snake head collides with food, instantiate a new tail piece and set its position to the back piece + offset
-             */
-            
-            //print(other.gameObject.name); // Not printing?
+            //GrowTail();
             Destroy(other.gameObject);
         }
+    }
+
+    private void GrowTail()
+    {
+        Transform endTailPart = _tailPartsList[_tailPartsList.Count-1];
+        Vector3 newTailPartPosition = endTailPart.position + new Vector3(-1.1F,0,0);
+        GameObject newTailPart = Instantiate(_tailPrefab);
+        newTailPart.transform.position = newTailPartPosition;
+        newTailPart.transform.SetParent(transform);
+        _tailPartsList.Add(newTailPart.transform);
     }
 }
